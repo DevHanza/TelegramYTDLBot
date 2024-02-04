@@ -1,0 +1,4 @@
+pyTelegramBotAPI==4.15.4
+python-dotenv==1.0.1
+python-telegram-bot==20.7
+yt_dlp==2023.12.30
