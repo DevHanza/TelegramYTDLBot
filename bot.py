@@ -79,7 +79,7 @@ async def download(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         print("Downloaded Successfully! \n ")
 
-        Vidfilename = f"{vidTitle}_{vidID}"
+        Vidfilename = f"{vidTitle}_{vidID}.mp4"
 
         # document = open(str(Vidfilename), 'rb')
         # context.bot.send_document(update.effective_chat.id, open(file_path, "rw"))
