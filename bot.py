@@ -86,7 +86,7 @@ async def download(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_document(update.effective_chat.id, open(Vidfilename, 'rb'), filename=Vidfilename)
         
         # Delete the file
-        # os.remove(Vidfilename)
+        os.remove(Vidfilename)
 
 
 # Main Command
