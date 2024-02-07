@@ -64,8 +64,10 @@ async def download(update: Update, context: ContextTypes.DEFAULT_TYPE):
             vidInfo = ydl.extract_info(videoURL, download=False)
 
             vidTitle = vidInfo.get('title', None)
+            vidID = vidInfo.get('id', None)
             vidDuration = vidInfo.get('duration', None)
-            vidSize = vidInfo.get('filesize_approx', None) // 1048576
+            vidSize = (vidInfo.get('filesize_approx', None) // 1048576)
+            
 
             print("\n🔹 Title:", vidTitle)
             print("🔹 Duration:", vidDuration)
@@ -73,15 +75,18 @@ async def download(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         print("\nDownloading...")
 
-        ydl.download(['https://www.youtube.com/watch?v=BxUS1K7xu30'])
+        ydl.download([videoURL])
 
         print("Downloaded Successfully! \n ")
 
-        filename = ydl.prepare_filename(vidInfo)
-        # Send the video file
-        context.bot.send_document(update.effective_chat.id, open(filename, "rb"))
+        Vidfilename = f"{vidTitle}_{vidID}"
+
+        # document = open(str(Vidfilename), 'rb')
+        # context.bot.send_document(update.effective_chat.id, open(file_path, "rw"))
+        await context.bot.send_document(update.effective_chat.id, open(Vidfilename, 'rb'), filename=Vidfilename)
+        
         # Delete the file
-        os.remove(filename)
+        # os.remove(Vidfilename)
 
 
 # Main Command
