@@ -155,8 +155,7 @@ def send_welcome(message):
 @bot.message_handler(func=lambda m: True)
 def download(message):
 
-    # Indetifying the YOUTUBE LINKS from the User Input (message)
-    # Extract the text from the message
+# Indetifying the YOUTUBE LINKS from the User Input (message)
 
     # Use a regular expression to find all URLs in the text
     all_links = re.findall(r'(https?://[^\s]+)', message.text)
@@ -169,10 +168,9 @@ def download(message):
 
     # Check if any YouTube links were found
     if youtube_links:
-        # If YouTube links were found, reply with those links
         bot.reply_to(message, f"Found YouTube links: {', '.join(youtube_links)}")
+        videoURL = youtube_links[0]
     else:
-        # If no YouTube links were found, reply with a message saying so
         bot.reply_to(message, "No YouTube links found.")
 
     
