@@ -1,5 +1,6 @@
 import telebot , re, pytube , os , sys
 from dotenv import dotenv_values
+import time
 
 # My custom modules
 from modules import vidmerge, progressBar
@@ -15,7 +16,7 @@ TOKEN = EnvConfig["BOT_API_KEY"]
 
 bot = telebot.TeleBot(TOKEN, parse_mode="MARKDOWN") # You can set parse_mode by default. HTML or MARKDOWN
 
-@bot.message_handler(commands=['start', 'help'])
+@bot.message_handler(commands=['start'])
 def send_welcome(message):
 	bot.reply_to(message, "Hello, I'm a *Simple Youtube Downloader!👋*\n\nTo get started, just type the /help command.")
 	
@@ -48,8 +49,9 @@ def download(message):
 # Download the video from YouTube using pytube
         
     print("Looking for Available Qualities..")
-    bot.reply_to(message, "Looking for Available Qualities..")
 
+    loading_message = bot.reply_to(message, "Looking for Available Qualities..")
+    
     yt = pytube.YouTube(videoURL, on_progress_callback=progressBar.progress_hook)
 
     streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
@@ -67,8 +69,14 @@ def download(message):
     # Print the Table of Stream Data
     print(streamsData)
 
+    
+
     try:
         userInput = 3
+
+        bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, 
+                          text="Downloading...📥")
+        
         streams[userInput].download(filename=f"{yt.title}.mp4", output_path=mediaPath)
         print("Video Downloaded. ✔")
 
@@ -86,18 +94,22 @@ def download(message):
     videoID = pytube.extract.video_id(videoURL)
     videoFileName = f"{yt.title}_{videoID}.mp4"
 
+    bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, 
+                          text="Processing...♻")
+            
     # Merge the Audio & Video File 
     vidmerge.merge(title=f"{yt.title}", outVidTitle=videoFileName)
 
-    bot.reply_to(message, "Uploading...")
-
+    bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, 
+                          text="Uploading...📤")
+    
+    # Upload the video to Telegram
     with open(f"vids/{videoFileName}", 'rb') as file:
         bot.send_document(message.chat.id, file)
 
-    bot.reply_to(message, "Downloaded.")
+    bot.delete_message(chat_id=message.chat.id, message_id=loading_message.message_id)
+    bot.reply_to(message, "Downloaded...✅")
     
-
-
     # Remove the Media Files
     os.remove(f"{mediaPath}/{yt.title}.mp4")
     os.remove(f"{mediaPath}/{yt.title}.mp3")
