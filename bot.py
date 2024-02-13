@@ -1,6 +1,9 @@
-import telebot , re, pytube , os , sys
+import telebot
+import re
+import pytube
+import os
+import sys
 from dotenv import dotenv_values
-import time
 
 # My custom modules
 from modules import vidmerge, progressBar
@@ -14,107 +17,103 @@ from modules import vidmerge, progressBar
 EnvConfig = dotenv_values(".env")
 TOKEN = EnvConfig["BOT_API_KEY"]
 
-bot = telebot.TeleBot(TOKEN, parse_mode="MARKDOWN") # You can set parse_mode by default. HTML or MARKDOWN
+# You can set parse_mode by default. HTML or MARKDOWN
+bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
+
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-	bot.reply_to(message, "Hello, I'm a *Simple Youtube Downloader!👋*\n\nTo get started, just type the /help command.")
-	
+    bot.reply_to(
+        message, "Hello, I'm a <b>Simple Youtube Downloader!👋</b>\n\nTo get started, just type the /help command.")
+
+
 @bot.message_handler(func=lambda m: True)
-def download(message):
+def check_link(message):
 
-# Indetifying the YOUTUBE LINKS from the User Input (message)
+    linkFilter = re.compile(
+        r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    userLinks = re.findall(linkFilter, message.text)
 
-    # Use a regular expression to find all URLs in the text
-    all_links = re.findall(r'(https?://[^\s]+)', message.text)
-
-    # Filter out the URLs that are not YouTube links
-    youtube_links = []
-    for link in all_links:
+    yt_link = []
+    for link in userLinks:
         if 'youtube.com' in link or 'youtu.be' in link:
-            youtube_links.append(link)
+            yt_link.append(link)
 
-    # Check if any YouTube links were found
-    if youtube_links:
-        # bot.reply_to(message, f"Found YouTube links: {', '.join(youtube_links)}")
-        bot.reply_to(message, f"Found YouTube links: {', '.join(youtube_links)}")
+    if yt_link:
+        videoURL = yt_link[0]
+        foundLinkMsg = bot.reply_to(message, f"Found a YouTube link: {videoURL}", disable_web_page_preview=True)
+        downloadVideo(message=message, videoURL=videoURL, foundLinkMsg=foundLinkMsg)
 
-        if len(youtube_links) > 1:
-            bot.reply_to(message, "By sending multiple links at once, *only the first link* will be downloaded!.")
-        
-        videoURL = youtube_links[0]
     else:
         bot.reply_to(message, "No YouTube links found.")
 
-# Download the video from YouTube using pytube
-        
-    print("Looking for Available Qualities..")
+
+
+def downloadVideo(message, videoURL, foundLinkMsg):
+
+    # Download the video from YouTube using pytube
+
+    # bot.send_photo(message.chat.id, yt.thumbnail_url, caption="yt.title")
+
+    yt = pytube.YouTube(videoURL, on_progress_callback=progressBar.progress_hook)
+
+    # Thumbnail With Caption
+    bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"Title: {yt.title}")
 
     loading_message = bot.reply_to(message, "Looking for Available Qualities..")
-    
-    yt = pytube.YouTube(videoURL, on_progress_callback=progressBar.progress_hook)
 
     streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
     mediaPath = f"{os.getcwd()}/vids"
 
     # -------VIDEOS-------
 
-    streamsData = []
 
     for count, stream in enumerate(streams, start=1):
-        # print(f"{count}.  Res: {stream.resolution}  |  Size:{stream.filesize_mb} mb")
-        # print(stream)
-        streamsData.append([count, stream.resolution, stream.filesize_mb])
+        # print(count, stream.resolution, stream.filesize_mb)
+        bot.reply_to(message, f"{stream.resolution}  ―  {stream.filesize_mb}MB")
 
-    # Print the Table of Stream Data
-    print(streamsData)
-
+    bot.delete_message(chat_id=message.chat.id, message_id=foundLinkMsg.message_id)
     
-
     try:
         userInput = 3
 
-        bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, 
-                          text="Downloading...📥")
-        
+        bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, text="<b>Downloading...</b>📥")
+
         streams[userInput].download(filename=f"{yt.title}.mp4", output_path=mediaPath)
         print("Video Downloaded. ✔")
 
     except:
         print("Wrong Input! Try Again!")
-        sys.exit()
-
+        
     # -------AUDIOS-------
-            
+
     for stream in yt.streams.filter(only_audio=True, abr="128kbps"):
         stream.download(filename=f"{yt.title}.mp3", output_path=mediaPath)
         print("Audio Downloaded. ✔")
 
-
     videoID = pytube.extract.video_id(videoURL)
     videoFileName = f"{yt.title}_{videoID}.mp4"
 
-    bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, 
-                          text="Processing...♻")
-            
-    # Merge the Audio & Video File 
+    bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, text="Processing...♻")
+
+    # Merge the Audio & Video File
     vidmerge.merge(title=f"{yt.title}", outVidTitle=videoFileName)
 
-    bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, 
-                          text="Uploading...📤")
-    
+    bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, text="Uploading...📤")
+
     # Upload the video to Telegram
     with open(f"vids/{videoFileName}", 'rb') as file:
         bot.send_document(message.chat.id, file)
 
     bot.delete_message(chat_id=message.chat.id, message_id=loading_message.message_id)
     bot.reply_to(message, "Downloaded...✅")
-    
+
     # Remove the Media Files
     os.remove(f"{mediaPath}/{yt.title}.mp4")
     os.remove(f"{mediaPath}/{yt.title}.mp3")
     os.remove(f"{mediaPath}/{videoFileName}")
     print("File was sent to User & Deleted from local.")
+
 
 print("TelegramYTDLBot is running..")
 bot.infinity_polling()

@@ -1,6 +1,6 @@
 ffmpeg_python==0.2.0
 pyTelegramBotAPI==4.15.4
+pyTelegramBotAPI==4.15.4
 python-dotenv==1.0.1
-python-telegram-bot==20.8
 python_ffmpeg==2.0.10
 pytube==15.0.0
