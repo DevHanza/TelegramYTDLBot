@@ -66,11 +66,13 @@ def downloadVideo(message, videoURL, foundLinkMsg):
     mediaPath = f"{os.getcwd()}/vids"
 
     # -------VIDEOS-------
-
+    streamsData = []
 
     for count, stream in enumerate(streams, start=1):
         # print(count, stream.resolution, stream.filesize_mb)
-        bot.reply_to(message, f"{stream.resolution}  ―  {stream.filesize_mb}MB")
+        streamsData.append([count, stream.resolution, stream.filesize_mb])
+
+    print(streamsData)
 
     bot.delete_message(chat_id=message.chat.id, message_id=foundLinkMsg.message_id)
     
