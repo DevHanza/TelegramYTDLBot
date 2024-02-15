@@ -57,6 +57,9 @@ def check_link(message):
 # Get the available resoultuions of the video
 def getVidInfo(message):
 
+    # Thumbnail With Caption
+    bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"Title: {yt.title}\nRating: {yt.rating} \nDuration: {yt.length}")
+
     bot.reply_to(message, "Looking for Available Qualities..")
     
     streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
@@ -87,7 +90,7 @@ def callback_query(call):
     bot.answer_callback_query(call.id, f"Selected {received_list[1]} to download.")
 
     userInput = int(received_list[0]) - 1
-    downloadVideo(message=call.message, userInput=userInput)
+    # downloadVideo(message=call.message, userInput=userInput)
 
 
 # Download the YouTube Video
@@ -96,25 +99,29 @@ def downloadVideo(message, userInput):
     videoFileName = f"{yt.title}_{videoID}.mp4"
     mediaPath = f"{os.getcwd()}/vids"
 
+    
     streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
     mediaPath = f"{os.getcwd()}/vids"
     
-    print(f"\n\n{type(userInput)}\n\n")
-    print(userInput)
+    # print(f"\n\n{type(userInput)}\n\n")
+    # print(userInput)
 
     try:
+        # -------VIDEO-------
         bot.send_message(chat_id=message.chat.id, text="<b>Downloading...</b>📥")
         streams[userInput].download(filename=f"{yt.title}.mp4", output_path=mediaPath)
-        print("Video Downloaded. ✔")
+        print("Video Downloaded.")
 
     except:
-        print("Wrong Input! Try Again!")
+        print("Error while downloading the Video.")
         
-    # -------AUDIOS-------
-
-    for stream in yt.streams.filter(only_audio=True, abr="128kbps"):
-        stream.download(filename=f"{yt.title}.mp3", output_path=mediaPath)
-        print("Audio Downloaded. ✔")    
+    try:
+        # -------AUDIOS-------
+        for stream in yt.streams.filter(only_audio=True, abr="128kbps"):
+            stream.download(filename=f"{yt.title}.mp3", output_path=mediaPath)
+            print("Audio Downloaded.")    
+    except:
+        print("Error while downloading the Audio.")
 
     bot.send_message(chat_id=message.chat.id, text="<b>Processing...♻</b>")
 
