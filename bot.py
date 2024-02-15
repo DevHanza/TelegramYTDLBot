@@ -43,11 +43,15 @@ def check_link(message):
     if yt_link:
         global videoURL
         global yt
+        global ytThumbMsg
         
         videoURL = yt_link[0]
         yt = pytube.YouTube(videoURL, on_progress_callback=progressBar.progress_hook)
         
-        bot.reply_to(message, f"Found a YouTube link: {videoURL}", disable_web_page_preview=True)
+        # Thumbnail With Caption
+        # bot.reply_to(message, f"Found a YouTube link: {videoURL}", disable_web_page_preview=True)
+        ytThumbMsg = bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"<b>{yt.title}</b>\n\n<b>Link:</b> {videoURL}")
+
         getVidInfo(message=message)
 
     else:
@@ -56,11 +60,8 @@ def check_link(message):
 
 # Get the available resoultuions of the video
 def getVidInfo(message):
-
-    # Thumbnail With Caption
-    bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"Title: {yt.title}\nRating: {yt.rating} \nDuration: {yt.length}")
-
-    bot.reply_to(message, "Looking for Available Qualities..")
+    global loadingMsg
+    loadingMsg = bot.reply_to(message, "Looking for Available Qualities..")
     
     streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
     streamsData = []
@@ -69,7 +70,7 @@ def getVidInfo(message):
         # print(count, stream.resolution, stream.filesize_mb)
         streamsData.append([count, stream.resolution, stream.filesize_mb])
 
-    print(streamsData)
+    # print(streamsData)
 
     # Add Inline Buttons to get user input
     markup = types.InlineKeyboardMarkup() 
@@ -78,19 +79,20 @@ def getVidInfo(message):
         button = types.InlineKeyboardButton(text=f"{data[1]} ─ ({data[2]}MB)", callback_data=callbackData)
         markup.add(button) 
 
-    bot.send_message(message.chat.id, "Choose a stream:", reply_markup=markup)
+    global qualityBtnList
+    qualityBtnList = bot.send_message(message.chat.id, "Choose a stream:", reply_markup=markup)
 
-# Callback handler for getVidInfo() 
+# Callback handler for # getVidInfo() 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
     # print(call.data)
     received_list = call.data.split("#")
-    print(received_list)
+    # print(received_list)
 
     bot.answer_callback_query(call.id, f"Selected {received_list[1]} to download.")
 
     userInput = int(received_list[0]) - 1
-    # downloadVideo(message=call.message, userInput=userInput)
+    downloadVideo(message=call.message, userInput=userInput)
 
 
 # Download the YouTube Video
@@ -106,9 +108,11 @@ def downloadVideo(message, userInput):
     # print(f"\n\n{type(userInput)}\n\n")
     # print(userInput)
 
+    bot.delete_message(chat_id=message.chat.id, message_id=qualityBtnList.message_id)
+
     try:
+        bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="Downloading...📥")
         # -------VIDEO-------
-        bot.send_message(chat_id=message.chat.id, text="<b>Downloading...</b>📥")
         streams[userInput].download(filename=f"{yt.title}.mp4", output_path=mediaPath)
         print("Video Downloaded.")
 
@@ -123,17 +127,20 @@ def downloadVideo(message, userInput):
     except:
         print("Error while downloading the Audio.")
 
-    bot.send_message(chat_id=message.chat.id, text="<b>Processing...♻</b>")
+    bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Processing...♻</b>")
 
     # Merge the Audio & Video File
     vidmerge.merge(title=f"{yt.title}", outVidTitle=videoFileName)
 
-    bot.send_message(chat_id=message.chat.id, text="<b>Uploading...📤</b>")
+    bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Uploading...📤</b>")
 
     # Upload the video to Telegram
     with open(f"vids/{videoFileName}", 'rb') as file:
         bot.send_document(message.chat.id, file)
+    print("File was uploaded/sent to the User.")
 
+    bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
+    bot.delete_message(chat_id=message.chat.id, message_id=ytThumbMsg.message_id)
     bot.send_message(message.chat.id, "<b>Downloaded...✅</b>")
 
     # Remove the Media Files
@@ -144,7 +151,7 @@ def deleteMedia(mediaPath, videoFileName):
     os.remove(f"{mediaPath}/{yt.title}.mp4")
     os.remove(f"{mediaPath}/{yt.title}.mp3")
     os.remove(f"{mediaPath}/{videoFileName}")
-    print("File was sent to User & Deleted from local.")
+    print("Media was Deleted from local.")
 
 
 print("TelegramYTDLBot is running..")
