@@ -116,18 +116,18 @@ def downloadVideo(message, userInput):
         stream.download(filename=f"{yt.title}.mp3", output_path=mediaPath)
         print("Audio Downloaded. ✔")    
 
-    # bot.send_message(chat_id=message.chat.id, text="Processing...♻")
+    bot.send_message(chat_id=message.chat.id, text="<b>Processing...♻</b>")
 
     # Merge the Audio & Video File
     vidmerge.merge(title=f"{yt.title}", outVidTitle=videoFileName)
 
-    bot.send_message(chat_id=message.chat.id, text="Uploading...📤")
+    bot.send_message(chat_id=message.chat.id, text="<b>Uploading...📤</b>")
 
     # Upload the video to Telegram
     with open(f"vids/{videoFileName}", 'rb') as file:
         bot.send_document(message.chat.id, file)
 
-    bot.send_message(message.chat.id, "Downloaded...✅")
+    bot.send_message(message.chat.id, "<b>Downloaded...✅</b>")
 
     # Remove the Media Files
     deleteMedia(mediaPath, videoFileName)
