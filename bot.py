@@ -1,4 +1,5 @@
 import telebot
+from telebot import types
 import re
 import pytube
 import os
@@ -40,32 +41,25 @@ def check_link(message):
             yt_link.append(link)
 
     if yt_link:
+        global videoURL
+        global yt
+        
         videoURL = yt_link[0]
-        foundLinkMsg = bot.reply_to(message, f"Found a YouTube link: {videoURL}", disable_web_page_preview=True)
-        downloadVideo(message=message, videoURL=videoURL, foundLinkMsg=foundLinkMsg)
+        yt = pytube.YouTube(videoURL, on_progress_callback=progressBar.progress_hook)
+        
+        bot.reply_to(message, f"Found a YouTube link: {videoURL}", disable_web_page_preview=True)
+        getVidInfo(message=message)
 
     else:
         bot.reply_to(message, "No YouTube links found.")
 
 
+# Get the available resoultuions of the video
+def getVidInfo(message):
 
-def downloadVideo(message, videoURL, foundLinkMsg):
-
-    # Download the video from YouTube using pytube
-
-    # bot.send_photo(message.chat.id, yt.thumbnail_url, caption="yt.title")
-
-    yt = pytube.YouTube(videoURL, on_progress_callback=progressBar.progress_hook)
-
-    # Thumbnail With Caption
-    bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"Title: {yt.title}")
-
-    loading_message = bot.reply_to(message, "Looking for Available Qualities..")
-
+    bot.reply_to(message, "Looking for Available Qualities..")
+    
     streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
-    mediaPath = f"{os.getcwd()}/vids"
-
-    # -------VIDEOS-------
     streamsData = []
 
     for count, stream in enumerate(streams, start=1):
@@ -74,13 +68,42 @@ def downloadVideo(message, videoURL, foundLinkMsg):
 
     print(streamsData)
 
-    bot.delete_message(chat_id=message.chat.id, message_id=foundLinkMsg.message_id)
+    # Add Inline Buttons to get user input
+    markup = types.InlineKeyboardMarkup() 
+    for data in streamsData: 
+        callbackData = "#".join(map(str, data))
+        button = types.InlineKeyboardButton(text=f"{data[1]} ─ ({data[2]}MB)", callback_data=callbackData)
+        markup.add(button) 
+
+    bot.send_message(message.chat.id, "Choose a stream:", reply_markup=markup)
+
+# Callback handler for getVidInfo() 
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    # print(call.data)
+    received_list = call.data.split("#")
+    print(received_list)
+
+    bot.answer_callback_query(call.id, f"Selected {received_list[1]} to download.")
+
+    userInput = int(received_list[0]) - 1
+    downloadVideo(message=call.message, userInput=userInput)
+
+
+# Download the YouTube Video
+def downloadVideo(message, userInput):
+    videoID = pytube.extract.video_id(videoURL)
+    videoFileName = f"{yt.title}_{videoID}.mp4"
+    mediaPath = f"{os.getcwd()}/vids"
+
+    streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
+    mediaPath = f"{os.getcwd()}/vids"
     
+    print(f"\n\n{type(userInput)}\n\n")
+    print(userInput)
+
     try:
-        userInput = 3
-
-        bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, text="<b>Downloading...</b>📥")
-
+        bot.send_message(chat_id=message.chat.id, text="<b>Downloading...</b>📥")
         streams[userInput].download(filename=f"{yt.title}.mp4", output_path=mediaPath)
         print("Video Downloaded. ✔")
 
@@ -91,26 +114,26 @@ def downloadVideo(message, videoURL, foundLinkMsg):
 
     for stream in yt.streams.filter(only_audio=True, abr="128kbps"):
         stream.download(filename=f"{yt.title}.mp3", output_path=mediaPath)
-        print("Audio Downloaded. ✔")
+        print("Audio Downloaded. ✔")    
 
-    videoID = pytube.extract.video_id(videoURL)
-    videoFileName = f"{yt.title}_{videoID}.mp4"
-
-    bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, text="Processing...♻")
+    # bot.send_message(chat_id=message.chat.id, text="Processing...♻")
 
     # Merge the Audio & Video File
     vidmerge.merge(title=f"{yt.title}", outVidTitle=videoFileName)
 
-    bot.edit_message_text(chat_id=message.chat.id, message_id=loading_message.message_id, text="Uploading...📤")
+    bot.send_message(chat_id=message.chat.id, text="Uploading...📤")
 
     # Upload the video to Telegram
     with open(f"vids/{videoFileName}", 'rb') as file:
         bot.send_document(message.chat.id, file)
 
-    bot.delete_message(chat_id=message.chat.id, message_id=loading_message.message_id)
-    bot.reply_to(message, "Downloaded...✅")
+    bot.send_message(message.chat.id, "Downloaded...✅")
 
     # Remove the Media Files
+    deleteMedia(mediaPath, videoFileName)
+
+
+def deleteMedia(mediaPath, videoFileName):
     os.remove(f"{mediaPath}/{yt.title}.mp4")
     os.remove(f"{mediaPath}/{yt.title}.mp3")
     os.remove(f"{mediaPath}/{videoFileName}")
