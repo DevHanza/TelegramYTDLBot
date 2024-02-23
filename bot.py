@@ -30,6 +30,16 @@ def send_welcome(message):
     bot.reply_to(
         message, "Hello, I'm a <b>Simple Youtube Downloader!👋</b>\n\nTo get started, just type the /help command.")
 
+@bot.message_handler(commands=['help'])
+def send_welcome(message):
+    bot.reply_to(
+        message, f"<b>How to use?</b> 📝\n\nJust send a youtube video link <b>OR</b> Use @vid to search a video to download.\n\n<i>Share: @{bot.get_me().username }.</i>\n<i>Source: https://github.com/hansanaD/TelegramYTDLBot</i>")
+
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(
+        message, "Hello, I'm a <b>Simple Youtube Downloader!👋</b>\n\nTo get started, just type the /help command.")
+
 
 @bot.message_handler(func=lambda m: True)
 def check_link(message):
@@ -109,6 +119,7 @@ def showVids(message):
         markup.add(button) 
 
     bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="Choose a stream:", reply_markup=markup)
+
 
 
 # Callback handler for # getVidInfo() 
