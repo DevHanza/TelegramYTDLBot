@@ -43,14 +43,17 @@ def check_link(message):
             yt_link.append(link)
 
     if yt_link:
-        bot.reply_to(message, "YouTube links found.")
+        # bot.reply_to(message, "YouTube links found.")
 
         global videoURL
         global api
-        
+        global ytThumbMsg
+
         videoURL = yt_link[0]
         api = Handler(videoURL)
+        yt = pytube.YouTube(videoURL)
 
+        ytThumbMsg = bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"<b>{yt.title}</b>\n\n<b>Link:</b> {videoURL}")
         showVids(message=message)
 
     else:
@@ -59,6 +62,9 @@ def check_link(message):
 
 
 def showVids(message):
+
+    global loadingMsg
+    loadingMsg = bot.reply_to(message, "Looking for Available Qualities..🔎")
     
     q_list = ['4k', '1080p', '720p', '480p', '360p', '240p']
     # q_list.reverse()
@@ -102,8 +108,7 @@ def showVids(message):
         button = types.InlineKeyboardButton(text=f"{value["q"]}  ─  ({value["size"]})", callback_data=callbackData)
         markup.add(button) 
 
-    global qualityBtnList
-    qualityBtnList = bot.send_message(message.chat.id, "Choose a stream:", reply_markup=markup)
+    bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="Choose a stream:", reply_markup=markup)
 
 
 # Callback handler for # getVidInfo() 
@@ -115,7 +120,7 @@ def callback_query(call):
 
     bot.answer_callback_query(call.id, f"Selected {receivedData} to download.")
 
-    downloader.download(bot=bot, message=call.message, userInput=receivedData, videoURL=videoURL)
+    downloader.download(bot=bot, message=call.message, userInput=receivedData, videoURL=videoURL, loadingMsg=loadingMsg)
 
 
 
