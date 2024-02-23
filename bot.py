@@ -1,13 +1,16 @@
 import telebot
 from telebot import types
-import re
+
 import pytube
+from y2mate_api import Handler
+
 import os
+import re
 import sys
 from dotenv import dotenv_values
 
 # My custom modules
-from modules import vidmerge, progressBar
+from modules import downloader
 
 # Enable Logging
 # import logging
@@ -31,8 +34,7 @@ def send_welcome(message):
 @bot.message_handler(func=lambda m: True)
 def check_link(message):
 
-    linkFilter = re.compile(
-        r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    linkFilter = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
     userLinks = re.findall(linkFilter, message.text)
 
     yt_link = []
@@ -41,117 +43,80 @@ def check_link(message):
             yt_link.append(link)
 
     if yt_link:
+        bot.reply_to(message, "YouTube links found.")
+
         global videoURL
-        global yt
-        global ytThumbMsg
+        global api
         
         videoURL = yt_link[0]
-        yt = pytube.YouTube(videoURL, on_progress_callback=progressBar.progress_hook)
-        
-        # Thumbnail With Caption
-        # bot.reply_to(message, f"Found a YouTube link: {videoURL}", disable_web_page_preview=True)
-        ytThumbMsg = bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"<b>{yt.title}</b>\n\n<b>Link:</b> {videoURL}")
+        api = Handler(videoURL)
 
-        getVidInfo(message=message)
+        showVids(message=message)
 
     else:
         bot.reply_to(message, "No YouTube links found.")
 
 
-# Get the available resoultuions of the video
-def getVidInfo(message):
-    global loadingMsg
-    loadingMsg = bot.reply_to(message, "Looking for Available Qualities..")
+
+def showVids(message):
     
-    streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
-    streamsData = []
+    q_list = ['4k', '1080p', '720p', '480p', '360p', '240p']
+    # q_list.reverse()
 
-    for count, stream in enumerate(streams, start=1):
-        # print(count, stream.resolution, stream.filesize_mb)
-        streamsData.append([count, stream.resolution, stream.filesize_mb])
+    urlList = []
 
-    # print(streamsData)
+    def getVidInfo(r):
+        for video_metadata in api.run(quality=r):
+        
+            q = video_metadata.get("q")
+            dlink = video_metadata.get("dlink")
+            size = video_metadata.get("size")
+            
+            if dlink == None:
+                pass
+            else:
+                urlList.append([q, size,dlink])
+                # print(r, " fetched")
+                
+    # Iterate over q_list to check if res quality exist on that video
+    for r in q_list:
+        getVidInfo(r)
+
+    # print(urlList)
+
+    # Create a new list to show
+    showList = {}
+    for count, item in enumerate(urlList, 1):
+        del item[2] # Remove dlink from list
+        q = item[0]
+        # print(i)
+        size = item[1] 
+        showList.update( { count: { "q":q, "size": size }} )
+    
+    # print(showList)
 
     # Add Inline Buttons to get user input
     markup = types.InlineKeyboardMarkup() 
-    for data in streamsData: 
-        callbackData = "#".join(map(str, data))
-        button = types.InlineKeyboardButton(text=f"{data[1]} ─ ({data[2]}MB)", callback_data=callbackData)
+    for value in showList.values(): 
+        callbackData = value["q"]
+        button = types.InlineKeyboardButton(text=f"{value["q"]}  ─  ({value["size"]})", callback_data=callbackData)
         markup.add(button) 
 
     global qualityBtnList
     qualityBtnList = bot.send_message(message.chat.id, "Choose a stream:", reply_markup=markup)
 
+
 # Callback handler for # getVidInfo() 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
-    # print(call.data)
-    received_list = call.data.split("#")
-    # print(received_list)
 
-    bot.answer_callback_query(call.id, f"Selected {received_list[1]} to download.")
+    receivedData = call.data
+    # print(receivedData)
 
-    userInput = int(received_list[0]) - 1
-    downloadVideo(message=call.message, userInput=userInput)
+    bot.answer_callback_query(call.id, f"Selected {receivedData} to download.")
 
+    downloader.download(bot=bot, message=call.message, userInput=receivedData, videoURL=videoURL)
 
-# Download the YouTube Video
-def downloadVideo(message, userInput):
-    videoID = pytube.extract.video_id(videoURL)
-    videoFileName = f"{yt.title}_{videoID}.mp4"
-    mediaPath = f"{os.getcwd()}/vids"
-
-    
-    streams = yt.streams.filter(only_video=True, mime_type="video/mp4")
-    mediaPath = f"{os.getcwd()}/vids"
-    
-    # print(f"\n\n{type(userInput)}\n\n")
-    # print(userInput)
-
-    bot.delete_message(chat_id=message.chat.id, message_id=qualityBtnList.message_id)
-
-    try:
-        bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="Downloading...📥")
-        # -------VIDEO-------
-        streams[userInput].download(filename=f"{yt.title}.mp4", output_path=mediaPath)
-        print("Video Downloaded.")
-
-    except:
-        print("Error while downloading the Video.")
-        
-    try:
-        # -------AUDIOS-------
-        for stream in yt.streams.filter(only_audio=True, abr="128kbps"):
-            stream.download(filename=f"{yt.title}.mp3", output_path=mediaPath)
-            print("Audio Downloaded.")    
-    except:
-        print("Error while downloading the Audio.")
-
-    bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Processing...♻</b>")
-
-    # Merge the Audio & Video File
-    vidmerge.merge(title=f"{yt.title}", outVidTitle=videoFileName)
-
-    bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Uploading...📤</b>")
-
-    # Upload the video to Telegram
-    with open(f"vids/{videoFileName}", 'rb') as file:
-        bot.send_document(message.chat.id, file)
-    print("File was uploaded/sent to the User.")
-
-    bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
-    bot.delete_message(chat_id=message.chat.id, message_id=ytThumbMsg.message_id)
-    bot.send_message(message.chat.id, "<b>Downloaded...✅</b>")
-
-    # Remove the Media Files
-    deleteMedia(mediaPath, videoFileName)
-
-
-def deleteMedia(mediaPath, videoFileName):
-    os.remove(f"{mediaPath}/{yt.title}.mp4")
-    os.remove(f"{mediaPath}/{yt.title}.mp3")
-    os.remove(f"{mediaPath}/{videoFileName}")
-    print("Media was Deleted from local.")
 
 
 print("TelegramYTDLBot is running..")
