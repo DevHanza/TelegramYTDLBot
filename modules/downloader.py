@@ -19,7 +19,7 @@ def download(bot, message, userInput, videoURL, loadingMsg):
         # Start Downloading the Video
         api.save(third_dict=video_metadata, dir="vids", progress_bar=True)
 
-        vidFileName = f"{video_metadata["title"]} {video_metadata["vid"]}_{video_metadata["fquality"]}.{video_metadata["ftype"]}"
+        vidFileName = f"{video_metadata['title']} {video_metadata['vid']}_{video_metadata['fquality']}.{video_metadata['ftype']}"
     
         bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Uploading...📤</b>")
 

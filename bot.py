@@ -40,10 +40,10 @@ def send_ping(message):
     bot.reply_to(
         message, "<b>Pong!</b> 🤖")
 
-@bot.message_handler(commands=['ping'])
+@bot.message_handler(commands=['donate'])
 def send_donate(message):
     bot.reply_to(
-        message, "<b>Contact @dev00111 for Donations! 🤗</b>")
+        message, "<b>Contact @dev00111_bot for Donations! 🤗</b>")
 
 
 @bot.message_handler(func=lambda m: True)
@@ -120,7 +120,7 @@ def showVids(message):
     markup = types.InlineKeyboardMarkup() 
     for value in showList.values(): 
         callbackData = value["q"]
-        button = types.InlineKeyboardButton(text=f"{value["q"]}  ─  ({value["size"]})", callback_data=callbackData)
+        button = types.InlineKeyboardButton(text=f"{value['q']}  ─  ({value['size']})", callback_data=callbackData)
         markup.add(button) 
 
     bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="Choose a stream:", reply_markup=markup)
