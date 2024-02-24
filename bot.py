@@ -5,7 +5,7 @@ import pytube
 from y2mate_api import Handler
 
 import os
-import re
+import re , time
 import sys
 from dotenv import dotenv_values
 
@@ -31,14 +31,19 @@ def send_welcome(message):
         message, "Hello, I'm a <b>Simple Youtube Downloader!👋</b>\n\nTo get started, just type the /help command.")
 
 @bot.message_handler(commands=['help'])
-def send_welcome(message):
+def send_help(message):
     bot.reply_to(
         message, f"<b>How to use?</b> 📝\n\nJust send a youtube video link <b>OR</b> Use @vid to search a video to download.\n\n<i>Share: @{bot.get_me().username }.</i>\n<i>Source: https://github.com/hansanaD/TelegramYTDLBot</i>")
 
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
+@bot.message_handler(commands=['ping'])
+def send_ping(message):
     bot.reply_to(
-        message, "Hello, I'm a <b>Simple Youtube Downloader!👋</b>\n\nTo get started, just type the /help command.")
+        message, "<b>Pong!</b> 🤖")
+
+@bot.message_handler(commands=['ping'])
+def send_donate(message):
+    bot.reply_to(
+        message, "<b>Contact @dev00111 for Donations! 🤗</b>")
 
 
 @bot.message_handler(func=lambda m: True)
@@ -67,7 +72,7 @@ def check_link(message):
         showVids(message=message)
 
     else:
-        bot.reply_to(message, "No YouTube links found.")
+        bot.reply_to(message, "No YouTube links found!")
 
 
 
