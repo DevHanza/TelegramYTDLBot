@@ -20,7 +20,7 @@ python bot.py
 - Read the instructions on [tdlib/telegram-bot-api](https://github.com/tdlib/telegram-bot-api) first.
 - Now run these commands,
 - Go to: ```cd telegram-bot-api/bin```
-- Start the server by replace the api-id and api-hash on here,
+- Start the server by replacing the api-id and api-hash on here,
 - ``` ./telegram-bot-api --api-id=XXXXX --api-hash=XXXXXXXXXXXX --local ```
 
 ### 4. Run your script (ex: bot.py)
