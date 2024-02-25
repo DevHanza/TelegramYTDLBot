@@ -142,6 +142,9 @@ def callback_query(call):
 
     downloader.download(bot=bot, yt=yt, message=call.message, userInput=receivedData, videoURL=videoURL, loadingMsg=loadingMsg)
 
+    # Delete ytThumbMsg after video upload done.
+    bot.delete_message(chat_id=call.id, message_id=ytThumbMsg.message_id)
+
 
 
 print("TelegramYTDLBot is running..")
