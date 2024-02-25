@@ -28,6 +28,7 @@ python bot.py
 - run: ``` python bot.py```
 
 **both script & api server should run at the same time order to work.**
+
 _Sorry for my bad english and my messy documentation. 😶_
 
 
