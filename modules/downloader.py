@@ -31,11 +31,12 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
                 message.chat.id, 
                 open(f"vids/{vidFileName}", 'rb'), 
                 thumb=requests.get(yt.thumbnail_url).content,
-                caption= f" <i>Thanks for Using @{bot.get_me().username }.</i> ", 
+                # caption= f" <i>Thanks for Using @{bot.get_me().username }.</i> ", 
+                caption=f"<b>Title:</b> <i> { video_metadata['vid'] }</i>\n<b>URL:</b> <i> { videoURL } </i>\n<b>Quality:</b> <i> { video_metadata['q'] } </i>\n\n\n<i>Thanks for Using @{bot.get_me().username }.</i>",
                 width=1920, 
                 height=1080
             )
-        
+
         except Exception as e:
             bot.reply_to(message, f"Error uploading video: {e}")
     
@@ -47,4 +48,3 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
         bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
 
         os.remove(f"{mediaPath}/{vidFileName}")
-   
