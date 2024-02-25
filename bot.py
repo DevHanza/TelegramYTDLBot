@@ -1,5 +1,6 @@
 import telebot
 from telebot import types
+from telebot import apihelper
 
 import pytube
 from y2mate_api import Handler
@@ -21,6 +22,8 @@ from modules import downloader
 EnvConfig = dotenv_values(".env")
 TOKEN = EnvConfig["BOT_API_KEY"]
 
+apihelper.API_URL = "https://vigilant-succotash-rx46gxg9v6vfxxq6-8081.app.github.dev/bot{0}/{1}"
+# apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
 # You can set parse_mode by default. HTML or MARKDOWN
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 
@@ -63,6 +66,7 @@ def check_link(message):
         global videoURL
         global api
         global ytThumbMsg
+        global yt
 
         videoURL = yt_link[0]
         api = Handler(videoURL)
@@ -136,7 +140,7 @@ def callback_query(call):
 
     bot.answer_callback_query(call.id, f"Selected {receivedData} to download.")
 
-    downloader.download(bot=bot, message=call.message, userInput=receivedData, videoURL=videoURL, loadingMsg=loadingMsg)
+    downloader.download(bot=bot, yt=yt, message=call.message, userInput=receivedData, videoURL=videoURL, loadingMsg=loadingMsg)
 
 
 
