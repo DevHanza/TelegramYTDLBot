@@ -17,10 +17,11 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg):
 
         bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Downloading...📥</b>")
 
-        # Start Downloading the Video
-        api.save(third_dict=video_metadata, dir="vids", progress_bar=True)
+        vidFileName = f"{ video_metadata['vid'] }_{ video_metadata['q'] }.{ video_metadata['ftype'] }"
 
-        vidFileName = f"{video_metadata['title']} {video_metadata['vid']}_{video_metadata['fquality']}.{video_metadata['ftype']}"
+        # Start Downloading the Video
+        api.save(third_dict=video_metadata, dir="vids", naming_format=vidFileName, progress_bar=True)
+
     
         bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Uploading...📤</b>")
 
