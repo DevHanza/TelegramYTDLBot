@@ -3,7 +3,7 @@ from y2mate_api import Handler
 import requests
 
 # Download the YouTube Video
-def download(bot, yt, message, userInput, videoURL, loadingMsg):
+def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
     api = Handler(videoURL)
 
     mediaPath = f"{os.getcwd()}/vids"
@@ -42,6 +42,8 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg):
         
         print("File was uploaded/sent to the User.")
 
+        # Delete ytThumbMsg after video upload done.
+        bot.delete_message(chat_id=message.chat.id, message_id=ytThumbMsg.message_id)
         bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
 
         os.remove(f"{mediaPath}/{vidFileName}")
