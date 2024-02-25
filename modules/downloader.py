@@ -32,9 +32,14 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
                 open(f"vids/{vidFileName}", 'rb'), 
                 thumb=requests.get(yt.thumbnail_url).content,
                 # caption= f" <i>Thanks for Using @{bot.get_me().username }.</i> ", 
-                caption=f"<b>Title:</b> <i> { video_metadata['vid'] }</i>\n<b>URL:</b> <i> { videoURL } </i>\n<b>Quality:</b> <i> { video_metadata['q'] } </i>\n\n\n<i>Thanks for Using @{bot.get_me().username }.</i>",
                 width=1920, 
-                height=1080
+                height=1080,
+                caption=f"""
+                <b>Title:</b><i> { video_metadata['title'] }</i>
+<b>URL:</b><i> { videoURL } </i>
+<b>Quality:</b><i> { video_metadata['q'] } </i>
+
+<i><b>Thanks for Using @{bot.get_me().username }.</b></i>""",
             )
 
         except Exception as e:
