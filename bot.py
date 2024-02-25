@@ -140,10 +140,7 @@ def callback_query(call):
 
     bot.answer_callback_query(call.id, f"Selected {receivedData} to download.")
 
-    downloader.download(bot=bot, yt=yt, message=call.message, userInput=receivedData, videoURL=videoURL, loadingMsg=loadingMsg)
-
-    # Delete ytThumbMsg after video upload done.
-    bot.delete_message(chat_id=call.id, message_id=ytThumbMsg.message_id)
+    downloader.download(bot=bot, yt=yt, message=call.message, userInput=receivedData, videoURL=videoURL, loadingMsg=loadingMsg, ytThumbMsg=ytThumbMsg)
 
 
 
