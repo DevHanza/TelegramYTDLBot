@@ -3,8 +3,8 @@ A Simple Telegram Bot to Download YouTube Videos. (Only for Educational Purposes
 
 
 ### 1. Setup Environment Variables
-- [BotToken](https://core.telegram.org/bots/tutorial#obtain-your-bot-token))
-- [API ID & API HASH](https://core.telegram.org/api/obtaining_api_id))
+- [BotToken](https://core.telegram.org/bots/tutorial#obtain-your-bot-token)
+- [API ID & API HASH](https://core.telegram.org/api/obtaining_api_id)
   
 Please update the values in the `.env` file before run it on anywhere.
 
