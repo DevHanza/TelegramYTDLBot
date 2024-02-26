@@ -27,6 +27,7 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
 
         # Upload the video to Telegram
         try:
+            print(vidFileName, " uploading..")
             bot.send_video(
                 message.chat.id, 
                 open(f"vids/{vidFileName}", 'rb'), 
