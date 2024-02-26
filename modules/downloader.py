@@ -35,21 +35,21 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
                 width=1920, 
                 height=1080,
                 caption=f"""
-                <b>Title:</b><i> { video_metadata['title'] }</i>
+                <b>Title:</b><i> { video_metadata['f'] } </i>
 <b>URL:</b><i> { videoURL } </i>
 <b>Quality:</b><i> { video_metadata['q'] } </i>
 
 <i><b>Thanks for Using @{bot.get_me().username }.</b></i>""",
             )
 
+            print("File was uploaded/sent to the User.")
+            os.remove(f"{mediaPath}/{vidFileName}")
+
         except Exception as e:
             bot.reply_to(message, f"Error uploading video: {e}")
     
-        
-        print("File was uploaded/sent to the User.")
-
         # Delete ytThumbMsg after video upload done.
         bot.delete_message(chat_id=message.chat.id, message_id=ytThumbMsg.message_id)
         bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
 
-        os.remove(f"{mediaPath}/{vidFileName}")
+        
