@@ -19,9 +19,11 @@ async def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg
 
         vidFileName = f"{ video_metadata['vid'] }_{ video_metadata['q'] }.{ video_metadata['ftype'] }"
 
-        # Start Downloading the Video
-        api.save(third_dict=video_metadata, dir="vids", naming_format=vidFileName, progress_bar=True)
-
+        try:
+            # Start Downloading the Video
+            api.save(third_dict=video_metadata, dir="vids", naming_format=vidFileName, progress_bar=True)
+        except Exception as e:
+            await bot.reply_to(message, f"Error downloading video: {e}")
     
         await bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Uploading...📤</b>")
 
@@ -44,7 +46,6 @@ async def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg
             )
 
             print("File was uploaded/sent to the User.")
-            os.remove(f"{mediaPath}/{vidFileName}")
 
         except Exception as e:
             await bot.reply_to(message, f"Error uploading video: {e}")
@@ -52,5 +53,8 @@ async def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg
         # Delete ytThumbMsg after video upload done.
         await bot.delete_message(chat_id=message.chat.id, message_id=ytThumbMsg.message_id)
         await bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
+
+        # Delete the Media files after download.
+        os.remove(f"{mediaPath}/{vidFileName}")
 
         
