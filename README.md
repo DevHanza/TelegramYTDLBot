@@ -21,7 +21,7 @@ python bot.py
 - Now run these commands,
 - Go to: ```cd telegram-bot-api/bin```
 - Start the server by replacing the api-id and api-hash on here,
-- ``` ./telegram-bot-api --api-id=XXXXX --api-hash=XXXXXXXXXXXX --local ```
+- ``` ./telegram-bot-api --api-id=XXXXX --api-hash=XXXXXXXXXXXX --http-port=8081 --local ```
 
 ### 4. Run your script (ex: bot.py)
 - open a new "screen" or tab on your terminal.
