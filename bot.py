@@ -22,8 +22,8 @@ from modules import downloader
 EnvConfig = dotenv_values(".env")
 TOKEN = EnvConfig["BOT_API_KEY"]
 
-apihelper.API_URL = "https://vigilant-succotash-rx46gxg9v6vfxxq6-8081.app.github.dev/bot{0}/{1}"
-# apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
+apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
+
 # You can set parse_mode by default. HTML or MARKDOWN
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 
