@@ -163,5 +163,6 @@ cython_debug/
 .mp4
 .mp3
 test.py
+/telegram-bot-api
 
 

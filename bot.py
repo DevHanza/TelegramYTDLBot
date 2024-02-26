@@ -1,6 +1,8 @@
 import telebot
 from telebot import types
 from telebot import apihelper
+from telebot.async_telebot import AsyncTeleBot
+import asyncio
 
 import pytube
 from y2mate_api import Handler
@@ -25,32 +27,33 @@ TOKEN = EnvConfig["BOT_API_KEY"]
 apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
 
 # You can set parse_mode by default. HTML or MARKDOWN
-bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
+bot = AsyncTeleBot(TOKEN, parse_mode="HTML")
+# tb = telebot.AsyncTeleBot("TOKEN")
 
 
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(
+async def send_welcome(message):
+    await bot.reply_to(
         message, "Hello, I'm a <b>Simple Youtube Downloader!👋</b>\n\nTo get started, just type the /help command.")
 
 @bot.message_handler(commands=['help'])
-def send_help(message):
-    bot.reply_to(
+async def send_help(message):
+    await bot.reply_to(
         message, f"<b>How to use?</b> 📝\n\nJust send a youtube video link <b>OR</b> Use @vid to search a video to download.\n\n<i>Share: @{bot.get_me().username }.</i>\n<i>Source: https://github.com/hansanaD/TelegramYTDLBot</i>")
 
 @bot.message_handler(commands=['ping'])
-def send_ping(message):
-    bot.reply_to(
+async def send_ping(message):
+    await bot.reply_to(
         message, "<b>Pong!</b> 🤖")
 
 @bot.message_handler(commands=['donate'])
-def send_donate(message):
-    bot.reply_to(
+async def send_donate(message):
+    await bot.reply_to(
         message, "<b>Contact @dev00111_bot for Donations! 🤗</b>")
 
 
 @bot.message_handler(func=lambda m: True)
-def check_link(message):
+async def check_link(message):
 
     linkFilter = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
     userLinks = re.findall(linkFilter, message.text)
@@ -72,18 +75,18 @@ def check_link(message):
         api = Handler(videoURL)
         yt = pytube.YouTube(videoURL)
 
-        ytThumbMsg = bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"<b>{yt.title}</b>\n\n<b>Link:</b> {videoURL}")
-        showVids(message=message)
+        ytThumbMsg = await bot.send_photo(message.chat.id, yt.thumbnail_url, caption=f"<b>{yt.title}</b>\n\n<b>Link:</b> {videoURL}")
+        await showVids(message=message)
 
     else:
-        bot.reply_to(message, "No YouTube links found!")
+        await bot.reply_to(message, "No YouTube links found!")
 
 
 
-def showVids(message):
+async def showVids(message):
 
     global loadingMsg
-    loadingMsg = bot.reply_to(message, "Looking for Available Qualities..🔎")
+    loadingMsg = await bot.reply_to(message, "Looking for Available Qualities..🔎")
     
     q_list = ['4k', '1080p', '720p', '480p', '360p', '240p']
     # q_list.reverse()
@@ -127,22 +130,22 @@ def showVids(message):
         button = types.InlineKeyboardButton(text=f"{value['q']}  ─  ({value['size']})", callback_data=callbackData)
         markup.add(button) 
 
-    bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="Choose a stream:", reply_markup=markup)
+    await bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="Choose a stream:", reply_markup=markup)
 
 
 
 # Callback handler for # getVidInfo() 
 @bot.callback_query_handler(func=lambda call: True)
-def callback_query(call):
+async def callback_query(call):
 
     receivedData = call.data
     # print(receivedData)
 
-    bot.answer_callback_query(call.id, f"Selected {receivedData} to download.")
+    await bot.answer_callback_query(call.id, f"Selected {receivedData} to download.")
 
-    downloader.download(bot=bot, yt=yt, message=call.message, userInput=receivedData, videoURL=videoURL, loadingMsg=loadingMsg, ytThumbMsg=ytThumbMsg)
+    await downloader.download(bot=bot, yt=yt, message=call.message, userInput=receivedData, videoURL=videoURL, loadingMsg=loadingMsg, ytThumbMsg=ytThumbMsg)
 
 
 
 print("TelegramYTDLBot is running..")
-bot.infinity_polling()
+asyncio.run(bot.infinity_polling())
