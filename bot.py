@@ -24,7 +24,7 @@ from modules import downloader
 EnvConfig = dotenv_values(".env")
 TOKEN = EnvConfig["BOT_API_KEY"]
 
-apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
+# apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
 
 # You can set parse_mode by default. HTML or MARKDOWN
 bot = AsyncTeleBot(TOKEN, parse_mode="HTML")
@@ -39,7 +39,9 @@ async def send_welcome(message):
 @bot.message_handler(commands=['help'])
 async def send_help(message):
     await bot.reply_to(
-        message, f"<b>How to use?</b> 📝\n\nJust send a youtube video link <b>OR</b> Use @vid to search a video to download.\n\n<i>Share: @{bot.get_me().username }.</i>\n<i>Source: https://github.com/hansanaD/TelegramYTDLBot</i>")
+        message, f"<b>How to use?</b> 📝\n\nJust send a youtube video link <b>OR</b> Use @vid to search a video to download.\n\n<i>Share: @YoutubeDownloader4K0_bot.</i>\n<i>Source: https://github.com/hansanaD/TelegramYTDLBot</i>",
+        disable_web_page_preview=True
+        )
 
 @bot.message_handler(commands=['ping'])
 async def send_ping(message):
