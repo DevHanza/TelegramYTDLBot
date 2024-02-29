@@ -24,7 +24,7 @@ python bot.py
 - ``` ./telegram-bot-api --api-id=XXXXX --api-hash=XXXXXXXXXXXX --http-port=8081 --local ```
 
 ### 4. Run your script (ex: bot.py)
-- open a new "screen" or tab on your terminal.
+- open a new "[screen](https://www.geeksforgeeks.org/screen-command-in-linux-with-examples/)" or tab on your terminal.
 - run: ``` python bot.py```
 
 **both script & api server should run at the same time order to work.**
