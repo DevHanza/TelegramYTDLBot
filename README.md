@@ -19,6 +19,7 @@ python bot.py
 - Read the instructions on [tdlib/telegram-bot-api](https://github.com/tdlib/telegram-bot-api) first.
 - Now run these commands,
 - Go to: ```cd telegram-bot-api/bin```
+- Get [API ID & API HASH](https://core.telegram.org/api/obtaining_api_id)
 - Start the server by replacing the api-id and api-hash on here,
 - ``` ./telegram-bot-api --api-id=XXXXX --api-hash=XXXXXXXXXXXX --http-port=8081 --local ```
 
