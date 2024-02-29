@@ -1,15 +1,15 @@
 import telebot
 from telebot import types
-from telebot import apihelper
+# from telebot import apihelper
 
 import pytube
 from y2mate_api import Handler
 
 import os
-import re , time
-import sys
-from dotenv import dotenv_values
+import re
 
+from dotenv import load_dotenv, dotenv_values 
+load_dotenv()
 # My custom modules
 from modules import downloader
 
@@ -19,10 +19,10 @@ from modules import downloader
 # telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
 # Importing the BOT TOKEN from the .env file.
-EnvConfig = dotenv_values(".env")
-TOKEN = EnvConfig["BOT_API_KEY"]
 
-apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
+TOKEN = os.getenv("BOT_API_KEY")
+
+# apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
 
 # You can set parse_mode by default. HTML or MARKDOWN
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")

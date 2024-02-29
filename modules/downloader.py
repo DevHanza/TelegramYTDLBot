@@ -36,7 +36,7 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
                 width=1920, 
                 height=1080,
                 caption=f"""
-                <b>Title:</b><i> { video_metadata['f'] } </i>
+                <b>Title:</b><i> { yt.title } </i>
 <b>URL:</b><i> { videoURL } </i>
 <b>Quality:</b><i> { video_metadata['q'] } </i>
 
