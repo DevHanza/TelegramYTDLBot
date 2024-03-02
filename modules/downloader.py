@@ -3,7 +3,7 @@ from y2mate_api import Handler
 import requests
 
 # Download the YouTube Video
-async def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
+def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
     api = Handler(videoURL)
 
     mediaPath = f"{os.getcwd()}/vids"
@@ -15,7 +15,7 @@ async def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg
         if not os.path.exists(mediaPath):
             os.makedirs(mediaPath)
 
-        await bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Downloading...📥</b>")
+        bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Downloading...📥</b>")
 
         vidFileName = f"{ video_metadata['vid'] }_{ video_metadata['q'] }.{ video_metadata['ftype'] }"
 
@@ -23,14 +23,14 @@ async def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg
             # Start Downloading the Video
             api.save(third_dict=video_metadata, dir="vids", naming_format=vidFileName, progress_bar=True)
         except Exception as e:
-            await bot.reply_to(message, f"Error downloading video: {e}")
+            bot.reply_to(message, f"Error downloading video: {e}")
     
-        await bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Uploading...📤</b>")
+        bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Uploading...📤</b>")
 
         # Upload the video to Telegram
         try:
             print(vidFileName, "Uploading..")
-            await bot.send_video(
+            bot.send_video(
                 message.chat.id, 
                 open(f"vids/{vidFileName}", 'rb'), 
                 thumb=requests.get(yt.thumbnail_url).content,
@@ -48,11 +48,11 @@ async def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg
             print("File was uploaded/sent to the User.")
 
         except Exception as e:
-            await bot.reply_to(message, f"Error uploading video: {e}")
+            bot.reply_to(message, f"Error uploading video: {e}")
     
         # Delete ytThumbMsg after video upload done.
-        await bot.delete_message(chat_id=message.chat.id, message_id=ytThumbMsg.message_id)
-        await bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
+        bot.delete_message(chat_id=message.chat.id, message_id=ytThumbMsg.message_id)
+        bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
 
         # Delete the Media files after download.
         os.remove(f"{mediaPath}/{vidFileName}")
