@@ -25,7 +25,7 @@ TOKEN = os.getenv("BOT_API_KEY")
 # apihelper.API_URL = "http://0.0.0.0:8081/bot{0}/{1}"
 
 # You can set parse_mode by default. HTML or MARKDOWN
-bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
+bot = telebot.TeleBot(TOKEN, parse_mode="HTML", threaded=True)
 # tb = telebot.AsyncTeleBot("TOKEN")
 
 
