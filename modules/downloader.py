@@ -56,5 +56,3 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
 
         # Delete the Media files after download.
         os.remove(f"{mediaPath}/{vidFileName}")
-
-        
