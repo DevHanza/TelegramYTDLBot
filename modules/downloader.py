@@ -1,10 +1,13 @@
 import os
 from y2mate_api import Handler
 import requests
+import pytube
 
 # Download the YouTube Video
-def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
+def download(bot, message, userInput, videoURL):
+
     api = Handler(videoURL)
+    yt = pytube.YouTube(videoURL)
 
     mediaPath = f"{os.getcwd()}/vids"
 
@@ -15,7 +18,7 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
         if not os.path.exists(mediaPath):
             os.makedirs(mediaPath)
 
-        bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Downloading...📥</b>")
+        bot.send_message(chat_id=message.chat.id, text="<b>Downloading...📥</b>")
 
         vidFileName = f"{ video_metadata['vid'] }_{ video_metadata['q'] }.{ video_metadata['ftype'] }"
 
@@ -25,7 +28,7 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
         except Exception as e:
             bot.reply_to(message, f"Error downloading video: {e}")
     
-        bot.edit_message_text(chat_id=message.chat.id, message_id=loadingMsg.message_id, text="<b>Uploading...📤</b>")
+        bot.send_message(chat_id=message.chat.id, text="<b>Uploading...📤</b>")
 
         # Upload the video to Telegram
         try:
@@ -49,10 +52,10 @@ def download(bot, yt, message, userInput, videoURL, loadingMsg, ytThumbMsg):
 
         except Exception as e:
             bot.reply_to(message, f"Error uploading video: {e}")
+            print(vidFileName, f": Error uploading video: {e}")
     
-        # Delete ytThumbMsg after video upload done.
-        bot.delete_message(chat_id=message.chat.id, message_id=ytThumbMsg.message_id)
-        bot.delete_message(chat_id=message.chat.id, message_id=loadingMsg.message_id)
-
         # Delete the Media files after download.
         os.remove(f"{mediaPath}/{vidFileName}")
+        print(vidFileName, ": Done!")
+
+        
