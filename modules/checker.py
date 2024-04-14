@@ -81,7 +81,7 @@ def qualityChecker(bot, message, videoURL):
             markup.add(button)
         return markup
  
-    showListButtons = bot.reply_to(message=message, text="Choose a stream:", reply_markup=gen_markup())
+    bot.reply_to(message=message, text="Choose a stream:", reply_markup=gen_markup())
 
 
 

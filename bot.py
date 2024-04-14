@@ -1,8 +1,9 @@
 import os
 import telebot
 from telebot import types
+import threading
 
-from modules import checker, downloader
+from modules import checker, myqueues 
 
 from dotenv import load_dotenv, dotenv_values 
 load_dotenv()
@@ -32,13 +33,25 @@ def callback_query(call):
     # print(receivedData)
     
     bot.answer_callback_query(call.id, f"Selected {receivedData} to download.")
-    # Delete the message after button got clicked.
     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
-    # downloader.download(bot=bot, message=call.message, userInput=receivedData, videoURL=checker.videoURL)
-    bot.send_message(call.message.chat.id, f"{videoURL}, {receivedData} : Download Triggered!")
-            
+    queue_position = myqueues.download_queue.qsize()
+    myqueues.download_queue.put((call.message, videoURL, receivedData))
 
+    if queue_position == 0 & 1:
+        bot.send_message(call.message.chat.id, f"Download has been added to the queue.")
+    else:
+        bot.send_message(call.message.chat.id, f"Download has been added to the queue.\nPosition: #{queue_position}.")
+
+
+    # downloader.download(bot=bot, message=call.message, userInput=receivedData, videoURL=checker.videoURL)
+    # bot.send_message(call.message.chat.id, f"{videoURL} \n{receivedData} : Download Triggered!")
+            
+# message, videoURL, receivedData
+    
+download_thread = threading.Thread(target=myqueues.download_worker, args=(bot, myqueues.download_queue))
+download_thread.daemon = True
+download_thread.start()
 
 print("TelegramYTDLBot is running..")
 bot.infinity_polling()

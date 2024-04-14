@@ -37,9 +37,9 @@ def download(bot, message, userInput, videoURL):
                 message.chat.id, 
                 open(f"vids/{vidFileName}", 'rb'), 
                 thumb=requests.get(yt.thumbnail_url).content,
-                # caption= f" <i>Thanks for Using @{bot.get_me().username }.</i> ", 
                 width=1920, 
                 height=1080,
+                # caption= f" <i>Thanks for Using @{bot.get_me().username }.</i> ", 
                 caption=f"""
                 <b>Title:</b><i> { yt.title } </i>
 <b>URL:</b><i> { videoURL } </i>
@@ -57,5 +57,5 @@ def download(bot, message, userInput, videoURL):
         # Delete the Media files after download.
         os.remove(f"{mediaPath}/{vidFileName}")
         print(vidFileName, ": Done!")
-
+        print("-------------------------------")
         
