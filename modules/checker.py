@@ -16,22 +16,24 @@ def linkCheck(bot, message):
     if yt_link:
         # bot.reply_to(message, "YouTube links found.")
 
-        global videoURL
-        global ytApi
+        # global videoURL
+        # global ytApi
 
         videoURL = yt_link[0]
-        ytApi = Handler(videoURL)
+        
 
-        qualityChecker(bot=bot, message=message)
+        qualityChecker(bot=bot, message=message, videoURL=videoURL)
 
     else:
         bot.reply_to(message, "No YouTube links found!")
 
 
-def qualityChecker(bot, message):
+def qualityChecker(bot, message, videoURL):
 
     bot.reply_to(message, "Looking for Available Qualities..🔎")
-    
+
+    ytApi = Handler(videoURL)
+
     q_list = ['4k', '1080p', '720p', '480p', '360p', '240p']
     # q_list.reverse()
 
@@ -47,7 +49,7 @@ def qualityChecker(bot, message):
             if dlink == None:
                 pass
             else:
-                urlList.append([q, size,dlink])
+                urlList.append([q, size, dlink])
                 # print(r, " fetched")
                 
     # Iterate over q_list to check if res quality exist on that video
@@ -74,9 +76,13 @@ def qualityChecker(bot, message):
     def gen_markup():
         markup = InlineKeyboardMarkup() 
         for value in showList.values(): 
-            callbackData = value["q"]
+            callbackData = f"{ value["q"] }#{ videoURL }"
             button = InlineKeyboardButton(text=f"{value['q']} ({value['size']})", callback_data=callbackData)
             markup.add(button)
         return markup
  
-    bot.reply_to(message=message, text="Choose a stream:", reply_markup=gen_markup())
+    showListButtons = bot.reply_to(message=message, text="Choose a stream:", reply_markup=gen_markup())
+
+
+
+
