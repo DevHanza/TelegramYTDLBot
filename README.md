@@ -11,7 +11,6 @@ BOT_API_KEY = "6357576507:AAHePL8-xSzjOlnF5dRGiwhNyxxZsS3u7f4" # Replace with yo
 ```
 - Save it!
   
-Please update the values in the `.env` file before run it on anywhere.
 #
 ### 2. Install Dependencies
 ```
