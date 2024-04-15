@@ -8,7 +8,7 @@ _(Only for Educational Purposes)_
 - Create .env file
 - Paste this code into your file and replace with your own values.
 ```
-BOT_API_KEY = "6357576507:AAHePL8-xSzjOlnF5dRGiwhNyxxZsS3u7f4" # Replace with your own token
+BOT_API_KEY = "9999999999:AAHePL8-xSzjOlnF5dRGiwhNyxxZsS3u7f4" # Replace with your own token
 ```
 - Save it!
   
