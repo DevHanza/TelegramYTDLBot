@@ -30,7 +30,7 @@ def linkCheck(bot, message):
 
 def qualityChecker(bot, message, videoURL):
 
-    bot.reply_to(message, "Looking for Available Qualities..🔎")
+    qualityCheckerMsg = bot.reply_to(message, "Looking for Available Qualities..🔎")
 
     ytApi = Handler(videoURL)
 
@@ -80,7 +80,10 @@ def qualityChecker(bot, message, videoURL):
             button = InlineKeyboardButton(text=f"{value['q']} ({value['size']})", callback_data=callbackData)
             markup.add(button)
         return markup
- 
+    
+
+    bot.delete_message(qualityCheckerMsg.chat.id, qualityCheckerMsg.message_id)
+
     bot.reply_to(message=message, text="Choose a stream:", reply_markup=gen_markup())
 
 

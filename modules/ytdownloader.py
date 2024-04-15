@@ -18,7 +18,7 @@ def download(bot, message, userInput, videoURL):
         if not os.path.exists(mediaPath):
             os.makedirs(mediaPath)
 
-        bot.send_message(chat_id=message.chat.id, text="<b>Downloading...📥</b>")
+        downloadMsg = bot.send_message(chat_id=message.chat.id, text="<b>Downloading...📥</b>")
 
         vidFileName = f"{ video_metadata['vid'] }_{ video_metadata['q'] }.{ video_metadata['ftype'] }"
 
@@ -27,8 +27,8 @@ def download(bot, message, userInput, videoURL):
             api.save(third_dict=video_metadata, dir="vids", naming_format=vidFileName, progress_bar=True)
         except Exception as e:
             bot.reply_to(message, f"Error downloading video: {e}")
-    
-        bot.send_message(chat_id=message.chat.id, text="<b>Uploading...📤</b>")
+
+        bot.edit_message_text(chat_id=downloadMsg.chat.id, message_id=downloadMsg.message_id, text="<b>Uploading...📤</b>")
 
         # Upload the video to Telegram
         try:
@@ -53,7 +53,9 @@ def download(bot, message, userInput, videoURL):
         except Exception as e:
             bot.reply_to(message, f"Error uploading video: {e}")
             print(vidFileName, f": Error uploading video: {e}")
-    
+
+        bot.delete_message(downloadMsg.chat.id, downloadMsg.message_id)
+
         # Delete the Media files after download.
         os.remove(f"{mediaPath}/{vidFileName}")
         print(vidFileName, ": Done!")

@@ -1,11 +1,10 @@
 import os
 import telebot
-from telebot import types
 import threading
 
 from modules import checker, myqueues 
 
-from dotenv import load_dotenv, dotenv_values 
+from dotenv import load_dotenv 
 load_dotenv()
 
 TOKEN = os.getenv("BOT_API_KEY")
@@ -35,13 +34,14 @@ def callback_query(call):
     bot.answer_callback_query(call.id, f"Selected {receivedData} to download.")
     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
-    queue_position = myqueues.download_queue.qsize()
     myqueues.download_queue.put((call.message, videoURL, receivedData))
+    queue_position = myqueues.download_queue.qsize()
 
+    
     if queue_position == 0 & 1:
         bot.send_message(call.message.chat.id, f"Download has been added to the queue.")
     else:
-        bot.send_message(call.message.chat.id, f"Download has been added to the queue.\nPosition: #{queue_position}.")
+        bot.send_message(call.message.chat.id, f"Download has been added to the queue at #{queue_position}.")
 
 
     # downloader.download(bot=bot, message=call.message, userInput=receivedData, videoURL=checker.videoURL)
@@ -53,5 +53,5 @@ download_thread = threading.Thread(target=myqueues.download_worker, args=(bot, m
 download_thread.daemon = True
 download_thread.start()
 
-print("TelegramYTDLBot is running..")
+print("TelegramYTDLBot is running..\n")
 bot.infinity_polling()
