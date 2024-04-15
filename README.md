@@ -24,16 +24,22 @@ python bot.py
 You can choose not to use this service.\
 But then you won't be able  to **upload files up to 2000 MB** and get these [features](https://core.telegram.org/bots/api#using-a-local-bot-api-server).
 
-- Read the instructions on [tdlib/telegram-bot-api](https://github.com/tdlib/telegram-bot-api) first.
-- Now run these commands,
-- Go to: ```cd telegram-bot-api/bin```
-- Get [API ID & API HASH](https://core.telegram.org/api/obtaining_api_id)
-- Start the server by replacing the api-id and api-hash on here,
-- ``` ./telegram-bot-api --api-id=XXXXX --api-hash=XXXXXXXXXXXX --http-port=8081 --local ```
+- Generate your instructions from [here](https://tdlib.github.io/telegram-bot-api/build.html).
+- Go to:
+- ```
+  cd telegram-bot-api/bin
+  ```
+- Get API ID & HASH from [here](https://core.telegram.org/api/obtaining_api_id). (Watch this [Tutorial](https://www.youtube.com/watch?v=8naENmP3rg4) to get help.)
+- Start the server. (Remember to replace the values with your own values):
+- ```
+  ./telegram-bot-api --api-id=XXXXX --api-hash=XXXXXXXXXXXX --http-port=8081 --local
+  ```
+
+Read the instructions on [eternnoir/pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI/#using-local-bot-api-sever) and [tdlib/telegram-bot-api](https://github.com/tdlib/telegram-bot-api) for more information.
 #
 ### 4. Run your bot
 - open a new "[screen](https://www.geeksforgeeks.org/screen-command-in-linux-with-examples/)" or tab on your terminal.
-- run: ``` python bot.py```
+- run: ```python bot.py```
 
 **both script & api server should run at the same time order to work.**
 #
