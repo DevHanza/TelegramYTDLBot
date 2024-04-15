@@ -32,7 +32,7 @@ But then you won't be able  to **upload files up to 2000 MB** and get these [fea
 - Start the server by replacing the api-id and api-hash on here,
 - ``` ./telegram-bot-api --api-id=XXXXX --api-hash=XXXXXXXXXXXX --http-port=8081 --local ```
 #
-### 4. Run your script (ex: bot.py)
+### 4. Run your bot
 - open a new "[screen](https://www.geeksforgeeks.org/screen-command-in-linux-with-examples/)" or tab on your terminal.
 - run: ``` python bot.py```
 
