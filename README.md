@@ -1,6 +1,7 @@
-# YouTube Downloader Bot
-A Telegram Bot to Download YouTube Videos upto 4K under 2GB. \
-_(Only for Educational Purposes)_
+
+# <p align="center">YouTube Downloader Bot</p>
+<p align="center">A Telegram Bot to Download YouTube Videos upto 4K under 2GB.</p>
+<p align="center"><i>(Only for Educational Purposes)</i></p>
 
 #
 ### 1. Setup Environment Variables
