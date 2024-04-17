@@ -49,9 +49,13 @@ Read the instructions on [eternnoir/pyTelegramBotAPI](https://github.com/eternno
 
 **both script & api server should run at the same time order to work.**
 #
+
+## Disclaimer
+This repository is intended for educational and personal use only. The use of this repository for any commercial or illegal purposes is strictly prohibited. The repository owner does not endorse or encourage the downloading or sharing of copyrighted material without permission. The repository owner is not responsible for any misuse of the software or any legal consequences that may arise from such misuse
+
+- **APIs : [y2mate-api](https://github.com/Simatwa/y2mate-api/) , [pytelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI/)**
+- **Contact for issues : [@dev00111](https://t.me/dev00111)**
+#
 _Sorry for my bad english and my messy documentation. 😶_
-
-
-  
 
 
