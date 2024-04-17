@@ -15,6 +15,18 @@ bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 def send_welcome(message):
     bot.reply_to(
         message, "Hello, I'm a <b>Simple Youtube Downloader!👋</b>\n\nTo get started, just type the /help command.")
+
+@bot.message_handler(commands=['help'])
+def send_help(message):
+    bot.reply_to(
+        message,
+        """
+        <b>Just send your youtube link and select the video quality.</b> 😉
+  <i>
+  Developer: @dev00111
+  Source: <a href="https://github.com/hansanaD/TelegramYTDLBot">TelegramYTDLBot</a></i>
+        """, disable_web_page_preview=True,)
+        
     
 
 @bot.message_handler(func=lambda m: True)
