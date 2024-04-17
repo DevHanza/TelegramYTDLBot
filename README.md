@@ -14,7 +14,6 @@
 - ✅ Max video upload size : 2GB
 - ✅ Save server side resources.
 - ✅ No Developer side limits.
-- 
 
 ## How to Deploy
 ### 1. Setup Environment Variables
