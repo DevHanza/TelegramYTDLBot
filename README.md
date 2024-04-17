@@ -6,8 +6,17 @@
 <p align="center">A Telegram Bot to Download YouTube Videos upto 4K under 2GB.</p>
 <p align="center"><i>(Only for Educational Purposes)</i></p>
 
-
 #
+## Features 
+- ✅ Fast Downloads
+- ✅ Choose video quality before download.
+- ✅ Downloading Queue for users.
+- ✅ Max video upload size : 2GB
+- ✅ Save server side resources.
+- ✅ No Developer side limits.
+- 
+
+## How to Deploy
 ### 1. Setup Environment Variables
 - Get your [BOT_API_KEY](https://core.telegram.org/bots/tutorial#obtain-your-bot-token) from here.
 - Create .env file
