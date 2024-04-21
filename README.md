@@ -27,7 +27,6 @@ BOT_API_KEY = "9999999999:AAHePL8-xSzjOlnF5dRGiwhNyxxZsS3u7f4" # Replace with yo
 git clone https://github.com/hansanaD/TelegramYTDLBot.git;
 cd TelegramYTDLBot;
 pip install -r requirements.txt;
-python bot.py
 ```
 #
 ### 3. Run api server locally (optional)
