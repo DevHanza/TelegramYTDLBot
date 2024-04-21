@@ -33,7 +33,7 @@ pip install -r requirements.txt;
 You can choose not to use this service.\
 But then you won't be able  to **upload files up to 2000 MB** and get these [features](https://core.telegram.org/bots/api#using-a-local-bot-api-server).
 
-- Generate your instructions from [here](https://tdlib.github.io/telegram-bot-api/build.html).
+- Generate your instructions from [here](https://tdlib.github.io/telegram-bot-api/build.html). (This step might take upto 20 mins.)
 - Go to:
 - ```
   cd telegram-bot-api/bin
