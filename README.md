@@ -1,7 +1,3 @@
-![downloads](https://img.shields.io/github/downloads/hansanaD/TelegramYTDLBot/total.svg)
-![forks](https://img.shields.io/github/forks/hansanaD/TelegramYTDLBot.svg)
-![stars](https://img.shields.io/github/stars/hansanaD/TelegramYTDLBot.svg)
-![watchers](https://img.shields.io/github/watchers/hansanaD/TelegramYTDLBot.svg)
 # <p align="center">YouTube Downloader Bot</p>
 <p align="center">A Telegram Bot to Download YouTube Videos upto 4K under 2GB.</p>
 <p align="center"><i>(Only for Educational Purposes)</i></p>
