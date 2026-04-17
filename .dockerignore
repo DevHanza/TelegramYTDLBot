@@ -2,9 +2,16 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.env
 .git
 .gitignore
 node_modules/
 dist/
 build/
+
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
