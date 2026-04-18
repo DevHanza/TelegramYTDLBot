@@ -51,21 +51,22 @@ But then you won't be able to **upload files up to 2000 MB** and get these [feat
 
 Read the instructions on [eternnoir/pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI/#using-local-bot-api-sever) and [tdlib/telegram-bot-api](https://github.com/tdlib/telegram-bot-api) for more information.
 
-
 #### Run your bot
 
 Open a new "[screen](https://www.geeksforgeeks.org/screen-command-in-linux-with-examples/)" or tab on your terminal. Then run:
+
 ```bash
 python bot.py
 ```
 
 **both the script & api server should run at the same time order to work.**
 
+## Dependencies
+
+- [pytelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI/)
+- [python-dotenv](https://pypi.org/project/python-dotenv/)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 
 ## Disclaimer
 
 This repository is intended for educational and personal use only. The use of this repository for any commercial or illegal purposes is strictly prohibited. The repository owner does not endorse or encourage the downloading or sharing of copyrighted material without permission. The repository owner is not responsible for any misuse of the software or any legal consequences that may arise from such misuse
-
-- **APIs : [y2mate-api](https://github.com/Simatwa/y2mate-api/) , [pytelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI/)**
-- **Contact for issues : [@dev00111](https://t.me/dev00111)**
-
